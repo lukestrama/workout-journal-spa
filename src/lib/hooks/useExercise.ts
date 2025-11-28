@@ -1,7 +1,7 @@
 import { useSupabase } from "../supabase/SupabaseProvider";
 import { useState, useEffect } from "react";
-import { Exercise } from "../supabase/models";
-import { useUser } from "@clerk/nextjs";
+import type { Exercise } from "../supabase/models";
+import { useUser } from "@clerk/react-router";
 import { db } from "../db";
 
 export function useExercise(exercise: Exercise) {

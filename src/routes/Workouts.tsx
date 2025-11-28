@@ -89,7 +89,7 @@ export default function WorkoutsPage() {
               {workouts.map((w) => (
                 <li key={w.id} className="my-4">
                   <div className="relative">
-                    <Link to={`/workout/${w.id}`} className="text-lg flex-1">
+                    <Link to={`/workouts/${w.id}`} className="text-lg flex-1">
                       <Card>
                         <CardHeader className="flex justify-between">
                           <div>

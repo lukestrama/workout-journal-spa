@@ -1,7 +1,7 @@
 import { ADD_MODES } from "@/lib/constants";
 import type { Exercise } from "@/lib/supabase/models";
 
-const getAddMode = (
+export const getAddMode = (
   exercises: Exercise[],
   exerciseName: string,
   reps?: number
@@ -15,5 +15,3 @@ const getAddMode = (
 
   return ADD_MODES.exercise;
 };
-
-export default getAddMode;

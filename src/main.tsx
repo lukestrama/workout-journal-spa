@@ -5,7 +5,9 @@ import { ClerkProvider } from "@clerk/react-router";
 import { BrowserRouter, Routes, Route } from "react-router";
 import RootLayout from "./routes/RootLayout.tsx";
 import Home from "./routes/Home.tsx";
-import Workouts from "./routes/Workouts.tsx";
+import WorkoutsPage from "./routes/Workouts.tsx";
+import AddWorkoutPage from "./routes/Add.tsx";
+import WorkoutPage from "./routes/Workout.tsx";
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -21,8 +23,9 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route element={<RootLayout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/workouts" element={<Workouts />} />
-            {/* <Route path="/workouts/:id" element={<WorkoutDetail />} /> */}
+            <Route path="/workouts" element={<WorkoutsPage />} />
+            <Route path="/add" element={<AddWorkoutPage />} />
+            <Route path="/workouts/:id" element={<WorkoutPage />} />
           </Route>
         </Routes>
       </ClerkProvider>

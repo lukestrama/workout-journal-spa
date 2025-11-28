@@ -1,6 +1,4 @@
-"use client";
-
-import { Exercise, ExerciseSet } from "@/lib/supabase/models";
+import type { Exercise, ExerciseSet } from "@/lib/supabase/models";
 import {
   Popover,
   PopoverContent,
