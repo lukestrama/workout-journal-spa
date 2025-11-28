@@ -57,14 +57,6 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
   await supabase.from("exercises").upsert(unsyncedExercises);
   await supabase.from("sets").upsert(unsyncedSets);
 
-  const deletedWorkouts = await db.workouts
-    .filter((w) => w.deleted_at !== null)
-    .toArray();
-  const deletedExercises = await db.exercises
-    .filter((e) => e.deleted === true)
-    .toArray();
-  const deletedSets = await db.sets.filter((s) => s.deleted === true).toArray();
-
   // Mark them as synced
   await db.transaction("rw", db.workouts, db.exercises, db.sets, async () => {
     for (const w of unsyncedWorkouts)
@@ -73,6 +65,14 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
       await db.exercises.update(e.id!, { synced: true });
     for (const s of unsyncedSets) await db.sets.update(s.id!, { synced: true });
   });
+
+  const deletedWorkouts = await db.workouts
+    .filter((w) => w.deleted_at !== null)
+    .toArray();
+  const deletedExercises = await db.exercises
+    .filter((e) => e.deleted === true)
+    .toArray();
+  const deletedSets = await db.sets.filter((s) => s.deleted === true).toArray();
 
   if (deletedWorkouts.length) {
     deletedWorkouts.forEach(

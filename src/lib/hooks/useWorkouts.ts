@@ -85,7 +85,7 @@ export function useWorkouts() {
 
     try {
       const workout = await db.workouts.get(workoutId);
-      if (workout?.synced === true) {
+      if (workout?.synced) {
         // Marked delete from Dexie if synced
         await db.workouts.update(workoutId, {
           deleted_at: new Date().toISOString(),
