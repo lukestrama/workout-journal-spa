@@ -364,10 +364,10 @@ export default function WorkoutPage() {
             <div className="flex flex-col-reverse sm:flex-row gap-4 items-center">
               <div className="flex justify-between gap-4">
                 {lastWorkoutId && (
-                  <Link to={`/workout/${lastWorkoutId}`}>Prev</Link>
+                  <Link to={`/workouts/${lastWorkoutId}`}>Prev</Link>
                 )}
                 {nextWorkoutId && (
-                  <Link to={`/workout/${nextWorkoutId}`}>Next</Link>
+                  <Link to={`/workouts/${nextWorkoutId}`}>Next</Link>
                 )}
               </div>
               <Button

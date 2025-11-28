@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import getAddMode from "@/app/workout/[id]/utils/getAddMode";
-import { ADD_MODES } from "@/lib/constants";
+import { getAddMode } from "../../../src/lib/functions/getAddMode";
+import { ADD_MODES } from "../../../src/lib/constants";
 
 describe("getAddMode", () => {
   it('should return "exercise" when no parameters are provided', () => {
