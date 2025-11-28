@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 interface BackButtonProps {
   classNames?: string;
@@ -9,10 +9,7 @@ interface BackButtonProps {
 
 const BackButton = ({ classNames }: BackButtonProps): React.ReactNode => {
   return (
-    <Link
-      href="/"
-      className={`flex items-center justify-between ${classNames}`}
-    >
+    <Link to="/" className={`flex items-center justify-between ${classNames}`}>
       <i className="fa-solid fa-chevron-left text-2xl"></i>
     </Link>
   );
