@@ -79,7 +79,7 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
       async (w) =>
         await supabase
           .from("workouts")
-          .update({ deleted_at: w.deleted_at })
+          .update({ deleted_at: w.deleted_at, updated_at: w.updated_at })
           .eq("id", w.id)
     );
   }
