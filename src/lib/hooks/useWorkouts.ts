@@ -19,7 +19,9 @@ export function useWorkouts() {
 
   const getWorkoutsSortedByDate = async () => {
     const workouts = await db.workouts;
-    const activeWorkouts = await workouts.filter((w) => !w.deleted).toArray();
+    const activeWorkouts = await workouts
+      .filter((w) => !w.deleted_at)
+      .toArray();
     return activeWorkouts.sort((a, b) => (a.date < b.date ? 1 : -1));
   };
 
@@ -84,8 +86,10 @@ export function useWorkouts() {
     try {
       const workout = await db.workouts.get(workoutId);
       if (workout?.synced === true) {
-        // Soft delete from Dexie if synced
-        await db.workouts.update(workoutId, { deleted: true });
+        // Marked delete from Dexie if synced
+        await db.workouts.update(workoutId, {
+          deleted_at: new Date().toISOString(),
+        });
       } else {
         await db.workouts.delete(workoutId);
       }

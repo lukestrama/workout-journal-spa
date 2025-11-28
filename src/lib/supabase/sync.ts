@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { db } from "../db";
+import type { Workout } from "./models";
 
 export async function syncWithSupabase(supabase: SupabaseClient) {
   const lastSynced = (await db.metadata.get("lastSyncedAt"))?.value ?? null;
@@ -57,7 +58,7 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
   await supabase.from("sets").upsert(unsyncedSets);
 
   const deletedWorkouts = await db.workouts
-    .filter((w) => w.deleted === true)
+    .filter((w) => w.deleted_at !== null)
     .toArray();
   const deletedExercises = await db.exercises
     .filter((e) => e.deleted === true)
@@ -73,13 +74,16 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     for (const s of unsyncedSets) await db.sets.update(s.id!, { synced: true });
   });
 
-  await supabase
-    .from("workouts")
-    .delete()
-    .in(
-      "id",
-      deletedWorkouts.map((w) => w.id)
+  if (deletedWorkouts.length) {
+    deletedWorkouts.forEach(
+      async (w) =>
+        await supabase
+          .from("workouts")
+          .update({ deleted_at: w.deleted_at })
+          .eq("id", w.id)
     );
+  }
+
   await supabase
     .from("exercises")
     .delete()
@@ -96,7 +100,6 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     );
 
   await Promise.all([
-    db.workouts.bulkDelete(deletedWorkouts.map((w) => w.id)),
     db.exercises.bulkDelete(deletedExercises.map((e) => e.id)),
     db.sets.bulkDelete(deletedSets.map((s) => s.id)),
   ]);
@@ -119,10 +122,16 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     .select("*")
     .gt("updated_at", lastSynced);
 
-  // Insert or update locally
-  await db.workouts.bulkPut(
-    remoteWorkouts?.map((w) => ({ ...w, synced: true })) ?? []
-  );
+  // Insert or update (or delete) locally
+  // decided to only do this for workouts as it's a decent amount of logic
+  // and I think that only the workouts have a real risk of this
+  remoteWorkouts?.forEach(async (w: Workout) => {
+    if (w.deleted_at) {
+      await db.workouts.delete(w.id);
+    } else {
+      await db.workouts.put(w);
+    }
+  });
   await db.exercises.bulkPut(
     remoteExercises?.map((e) => ({ ...e, synced: true })) ?? []
   );

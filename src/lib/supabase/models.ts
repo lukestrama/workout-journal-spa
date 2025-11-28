@@ -32,7 +32,7 @@ export interface Workout {
   type: string;
   synced?: boolean;
   updated_at: string;
-  deleted?: boolean;
+  deleted_at?: string | null;
 }
 
 export interface UserExercise {
