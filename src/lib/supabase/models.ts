@@ -7,6 +7,7 @@ export interface ExerciseSet {
   temporaryId?: number;
   synced?: boolean;
   deleted?: boolean;
+  updated_at: string;
 }
 
 export interface Exercise {
@@ -17,6 +18,7 @@ export interface Exercise {
   workout_date?: string;
   temporaryId?: number;
   synced?: boolean;
+  updated_at: string;
   deleted?: boolean;
 }
 
@@ -29,6 +31,7 @@ export interface Workout {
   notes?: string;
   type: string;
   synced?: boolean;
+  updated_at: string;
   deleted?: boolean;
 }
 

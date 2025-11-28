@@ -57,7 +57,7 @@ export function useWorkouts() {
 
     try {
       setLoading(true);
-      const workoutId = await db.workouts.put({
+      const workoutId = await db.workouts.add({
         title,
         date,
         type,
@@ -65,6 +65,7 @@ export function useWorkouts() {
         user_id: userId,
         id: genRandomInt(),
         synced: false,
+        updated_at: new Date().toISOString(),
       });
 
       setWorkouts(await getWorkoutsSortedByDate());

@@ -183,6 +183,7 @@ export default function WorkoutPage() {
         synced: false,
         id: Date.now(), // Dexie will replace this with auto-generated ID
         sets: [],
+        updated_at: new Date().toISOString(),
       };
 
       const exerciseId = await db.exercises.add(newExercise);
@@ -195,6 +196,7 @@ export default function WorkoutPage() {
       weight,
       reps,
       synced: false,
+      updated_at: new Date().toISOString(),
       exercise_id: targetExercise.id!,
       id: Date.now(), // Dexie will replace this with auto-generated ID
     };
@@ -221,6 +223,7 @@ export default function WorkoutPage() {
 
     const newExercise: Exercise = {
       name: exerciseName,
+      updated_at: new Date().toISOString(),
       workout_id: parseInt(id),
       synced: false,
       id: Date.now(), // Dexie will replace this with auto-generated ID
