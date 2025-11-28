@@ -99,6 +99,7 @@ export function useWorkouts() {
 
   return {
     workouts,
+    setWorkouts,
     loading,
     error,
     createWorkout,

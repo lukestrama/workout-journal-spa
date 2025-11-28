@@ -136,5 +136,5 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     value: new Date().toISOString(),
   });
 
-  return true;
+  return { workouts: await db.workouts.toArray() };
 }
