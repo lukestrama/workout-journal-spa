@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { ClerkProvider } from "@clerk/react-router";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { HashRouter, Routes, Route } from "react-router";
 import RootLayout from "./routes/RootLayout.tsx";
 import Home from "./routes/Home.tsx";
 import WorkoutsPage from "./routes/Workouts.tsx";
@@ -18,7 +18,7 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
         <Routes>
           <Route element={<RootLayout />}>
@@ -29,6 +29,6 @@ createRoot(document.getElementById("root")!).render(
           </Route>
         </Routes>
       </ClerkProvider>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>
 );
