@@ -30,14 +30,14 @@ export default function AddWorkoutPage() {
 
       <div className="space-y-4">
         <Input
-          className="border p-2 w-full"
+          className="border p-2 w-full placeholder:text-gray-500 text-white"
           placeholder="Workout title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <Input
           type="date"
-          className="border p-2 w-full"
+          className="border p-2 w-full placeholder:text-gray-500 text-white"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />

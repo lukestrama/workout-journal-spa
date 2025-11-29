@@ -28,4 +28,7 @@ export const selectStyles = {
   singleValue: () => {
     return "!text-white";
   },
+  input: () => {
+    return "!text-white";
+  },
 };
