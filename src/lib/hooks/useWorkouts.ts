@@ -28,9 +28,9 @@ export function useWorkouts() {
   const loadWorkouts = useCallback(async () => {
     if (!userId) return;
     try {
-      // Returns all workouts sorted by date ascending
       const workouts = await getWorkoutsSortedByDate();
-      setWorkouts(workouts);
+      const newWorkouts = workouts.map((w) => ({ ...w }));
+      setWorkouts(newWorkouts);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load workouts.");
     } finally {
@@ -50,57 +50,79 @@ export function useWorkouts() {
     loadWorkouts();
   }, [userId, supabase, loadWorkouts]);
 
-  async function createWorkout(
-    title: string,
-    date: string,
-    type: string
-  ): Promise<number | void> {
-    if (!userId) throw Error("Must be signed in to create a workout");
-
+  const refreshWorkouts = useCallback(async () => {
+    if (!userId) return;
     try {
-      setLoading(true);
-      const workoutId = await db.workouts.add({
-        title,
-        date,
-        type,
-        exercises: [],
-        user_id: userId,
-        id: genRandomInt(),
-        synced: false,
-        updated_at: new Date().toISOString(),
-      });
-
-      setWorkouts(await getWorkoutsSortedByDate());
-
-      return workoutId;
-    } catch (error) {
+      const freshWorkouts = await getWorkoutsSortedByDate();
+      // Create new array with new object references to ensure React detects changes
+      const newWorkouts = freshWorkouts.map((w) => ({ ...w }));
+      setWorkouts(newWorkouts);
+    } catch (err) {
       setError(
-        error instanceof Error ? error.message : "Failed to create workout"
+        err instanceof Error ? err.message : "Failed to refresh workouts."
       );
     }
-  }
+  }, [userId]);
 
-  async function deleteWorkout(workoutId: number) {
-    if (!workoutId) return;
+  const createWorkout = useCallback(
+    async (
+      title: string,
+      date: string,
+      type: string
+    ): Promise<number | void> => {
+      if (!userId) throw Error("Must be signed in to create a workout");
 
-    try {
-      const workout = await db.workouts.get(workoutId);
-      if (workout?.synced) {
-        // Marked delete from Dexie if synced
-        await db.workouts.update(workoutId, {
-          deleted_at: new Date().toISOString(),
+      try {
+        setLoading(true);
+        const workoutId = await db.workouts.add({
+          title,
+          date,
+          type,
+          exercises: [],
+          user_id: userId,
+          id: genRandomInt(),
+          synced: false,
           updated_at: new Date().toISOString(),
         });
-      } else {
-        await db.workouts.delete(workoutId);
+
+        await refreshWorkouts();
+
+        return workoutId;
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Failed to create workout"
+        );
+      } finally {
+        setLoading(false);
       }
-      setWorkouts(await getWorkoutsSortedByDate());
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to delete workout"
-      );
-    }
-  }
+    },
+    [userId, refreshWorkouts]
+  );
+
+  const deleteWorkout = useCallback(
+    async (workoutId: number) => {
+      if (!workoutId) return;
+
+      try {
+        const workout = await db.workouts.get(workoutId);
+        if (workout?.synced) {
+          // Marked delete from Dexie if synced
+          await db.workouts.update(workoutId, {
+            deleted_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+        } else {
+          await db.workouts.delete(workoutId);
+        }
+        await refreshWorkouts();
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Failed to delete workout"
+        );
+      }
+    },
+    [refreshWorkouts]
+  );
 
   return {
     workouts,
@@ -110,5 +132,6 @@ export function useWorkouts() {
     createWorkout,
     deleteWorkout,
     initialDataSync,
+    refreshWorkouts,
   };
 }

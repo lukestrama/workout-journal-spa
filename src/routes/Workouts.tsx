@@ -17,7 +17,8 @@ import { SyncButton } from "../components/SyncButton";
 
 export default function WorkoutsPage() {
   const { user } = useUser();
-  const { workouts, deleteWorkout, loading, initialDataSync } = useWorkouts();
+  const { workouts, deleteWorkout, loading, initialDataSync, refreshWorkouts } =
+    useWorkouts();
 
   // Initialize IndexedDB when user logs in
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function WorkoutsPage() {
           <div className="flex sm:justify-between sm:items-center flex-col sm:flex-row">
             <h1 className="text-2xl font-bold">My Workouts</h1>
             <div className="gap-4 flex">
-              <SyncButton />
+              <SyncButton onSyncComplete={refreshWorkouts} />
               <Button asChild>
                 <Link to="/add">Add workout</Link>
               </Button>

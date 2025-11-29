@@ -1,21 +1,28 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import { useSupabase } from "@/lib/supabase/SupabaseProvider";
 import { syncWithSupabase } from "@/lib/supabase/sync";
 import { useState } from "react";
 
-export function SyncButton() {
+interface SyncButtonProps {
+  onSyncComplete?: () => Promise<void>;
+}
+
+export function SyncButton({ onSyncComplete }: SyncButtonProps = {}) {
   const [loading, setLoading] = useState(false);
   const { supabase } = useSupabase();
-  const { setWorkouts } = useWorkouts();
 
   async function handleSync() {
     setLoading(true);
-    const { workouts } = await syncWithSupabase(supabase!);
-    setWorkouts(workouts);
-    setLoading(false);
+    try {
+      await syncWithSupabase(supabase!);
+      await onSyncComplete?.();
+    } catch (error) {
+      console.error("Sync failed:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
