@@ -26,23 +26,17 @@ export default function WorkoutsPage() {
       if (!user?.id) return;
 
       try {
-        console.log("Initializing database for user:", user.id);
-
         // Initialize database first
         await db.open();
-        console.log("Database opened successfully");
 
         const hasSyncedBefore = await db.metadata.get("initialSyncDone");
-        console.log("Has synced before:", hasSyncedBefore);
 
         if (!hasSyncedBefore) {
-          console.log("Starting initial data sync...");
           await initialDataSync();
           await db.metadata.put({
             key: "initialSyncDone",
             value: "true",
           });
-          console.log("Initial sync completed and marked as done");
         }
       } catch (error) {
         console.error("Database initialization failed:", error);
