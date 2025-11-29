@@ -40,6 +40,7 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     .filter((s) => s.synced === false)
     .toArray();
 
+  // delete these props to match supabase schema
   for (const w of unsyncedWorkouts) {
     delete w.exercises;
     delete w.synced;
@@ -129,7 +130,7 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     if (w.deleted_at) {
       await db.workouts.delete(w.id);
     } else {
-      await db.workouts.put(w);
+      await db.workouts.put({ ...w, synced: true });
     }
   });
   await db.exercises.bulkPut(
