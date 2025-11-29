@@ -26,7 +26,12 @@ export function SyncButton({ onSyncComplete }: SyncButtonProps = {}) {
   }
 
   return (
-    <Button variant={"secondary"} onClick={handleSync} disabled={loading}>
+    <Button
+      className="w-full"
+      variant={"secondary"}
+      onClick={handleSync}
+      disabled={loading}
+    >
       {loading ? "Syncing..." : "Sync Now"}
     </Button>
   );

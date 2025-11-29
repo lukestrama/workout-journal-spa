@@ -365,13 +365,21 @@ export default function WorkoutPage() {
           <div className="flex items-start mb-5 sm:items-center">
             <Header title={workout.title} subtitle={workout.date} />
             <div className="flex flex-col-reverse sm:flex-row gap-4 items-center">
-              <div className="flex justify-between gap-4">
-                {lastWorkoutId && (
-                  <Link to={`/workouts/${lastWorkoutId}`}>Prev</Link>
-                )}
-                {nextWorkoutId && (
-                  <Link to={`/workouts/${nextWorkoutId}`}>Next</Link>
-                )}
+              <div className="flex gap-4 justify-between text-center w-full">
+                <div className="w-[50%]">
+                  {lastWorkoutId && (
+                    <Button variant={"ghost"} asChild>
+                      <Link to={`/workouts/${lastWorkoutId}`}>Previous</Link>
+                    </Button>
+                  )}
+                </div>
+                <div className="w-[50%]">
+                  {nextWorkoutId && (
+                    <Button variant={"ghost"} asChild>
+                      <Link to={`/workouts/${nextWorkoutId}`}>Next</Link>
+                    </Button>
+                  )}
+                </div>
               </div>
               <Button
                 onClick={() => navigate("/workouts")}

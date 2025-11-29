@@ -62,11 +62,13 @@ export default function WorkoutsPage() {
         </div>
       ) : (
         <>
-          <div className="flex sm:justify-between sm:items-center flex-col sm:flex-row">
-            <h1 className="text-2xl font-bold">My Workouts</h1>
-            <div className="gap-4 flex">
-              <SyncButton onSyncComplete={refreshWorkouts} />
-              <Button asChild>
+          <div className="flex sm:justify-between  flex-col">
+            <h1 className="text-2xl font-bold mb-3">My Workouts</h1>
+            <div className="gap-4 flex w-full justify-between">
+              <div className="flex-1">
+                <SyncButton onSyncComplete={refreshWorkouts} />
+              </div>
+              <Button className="flex-1" asChild>
                 <Link to="/add">Add workout</Link>
               </Button>
             </div>
