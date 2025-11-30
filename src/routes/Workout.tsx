@@ -85,6 +85,8 @@ export default function WorkoutPage() {
           } else {
             setNextWorkoutId(null);
           }
+        } else {
+          navigate("/workouts");
         }
 
         // Load exercises for this workout
