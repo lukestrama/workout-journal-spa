@@ -34,9 +34,9 @@ export default function AddWorkoutPage() {
       </div>
 
       <div className="space-y-4">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="title">Workout Title</Label>
         <Input
-          id="email"
+          id="title"
           className="border p-2 w-full placeholder:text-gray-500 text-white"
           placeholder="Workout title"
           value={title}

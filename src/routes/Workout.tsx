@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { db } from "@/lib/db";
 import type {
   Exercise,
@@ -21,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 import AddWeightReps from "@/components/AddWeightReps";
 import { selectStyles } from "@/lib/utils";
 import { useUser } from "@clerk/react-router";
+import PreviousNextWorkouts from "@/components/workout/previousNextWorkouts";
+import WorkoutNavigation from "@/components/workout/workoutNavigation";
 
 const defaultWeight = 0;
 const defaultReps = 0;
@@ -75,13 +76,27 @@ export default function WorkoutPage() {
           const currentIndex = allWorkouts.findIndex((w) => w.id === workoutId);
 
           if (currentIndex > 0) {
-            setLastWorkoutId(allWorkouts[currentIndex - 1].id!);
+            let lastWorkout: Workout | null = null;
+            for (let i = currentIndex - 1; i >= 0; i--) {
+              if (!allWorkouts[i].deleted_at) {
+                lastWorkout = allWorkouts[i];
+                break;
+              }
+            }
+            setLastWorkoutId(lastWorkout?.id || null);
           } else {
             setLastWorkoutId(null);
           }
 
           if (currentIndex < allWorkouts.length - 1) {
-            setNextWorkoutId(allWorkouts[currentIndex + 1].id!);
+            let nextWorkout: Workout | null = null;
+            for (let i = currentIndex + 1; i < allWorkouts.length; i++) {
+              if (!allWorkouts[i].deleted_at) {
+                nextWorkout = allWorkouts[i];
+                break;
+              }
+            }
+            setNextWorkoutId(nextWorkout?.id || null);
           } else {
             setNextWorkoutId(null);
           }
@@ -125,7 +140,7 @@ export default function WorkoutPage() {
     };
 
     loadWorkoutData();
-  }, [id, user]);
+  }, [id, user, navigate]);
   /**
    * the idea here is that if we have an exercise that has already
    * been added to the workout, we should be in addSetMode. If the
@@ -366,31 +381,10 @@ export default function WorkoutPage() {
         <>
           <div className="flex items-start mb-5 sm:items-center">
             <Header title={workout.title} subtitle={workout.date} />
-            <div className="flex flex-col-reverse sm:flex-row gap-4 items-center">
-              <div className="flex gap-4 justify-between text-center w-full">
-                <div className="w-[50%]">
-                  {lastWorkoutId && (
-                    <Button variant={"ghost"} asChild>
-                      <Link to={`/workouts/${lastWorkoutId}`}>Previous</Link>
-                    </Button>
-                  )}
-                </div>
-                <div className="w-[50%]">
-                  {nextWorkoutId && (
-                    <Button variant={"ghost"} asChild>
-                      <Link to={`/workouts/${nextWorkoutId}`}>Next</Link>
-                    </Button>
-                  )}
-                </div>
-              </div>
-              <Button
-                onClick={() => navigate("/workouts")}
-                className=""
-                variant={"secondary"}
-              >
-                Back to workouts
-              </Button>
-            </div>
+            <WorkoutNavigation
+              lastWorkoutId={lastWorkoutId}
+              nextWorkoutId={nextWorkoutId}
+            />
           </div>
           <div className="space-y-3 mb-6">
             <label>Exercise</label>

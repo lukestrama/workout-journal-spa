@@ -4,10 +4,13 @@ export interface ExerciseSet {
   exercise_id: number;
   notes?: string;
   id: number;
-  temporaryId?: number;
   synced?: boolean;
   deleted?: boolean;
   updated_at: string;
+  // grouping system
+  group_id?: string | null; // same id = same group (superset, dropset, etc)
+  type?: "dropset" | "superset" | null; // null = normal set
+  order?: number; // 0, 1, 2, ... inside a group
 }
 
 export interface Exercise {
@@ -16,7 +19,6 @@ export interface Exercise {
   sets?: ExerciseSet[];
   workout_id: number;
   workout_date?: string;
-  temporaryId?: number;
   synced?: boolean;
   updated_at: string;
   deleted?: boolean;

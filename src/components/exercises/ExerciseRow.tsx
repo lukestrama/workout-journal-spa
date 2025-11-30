@@ -82,7 +82,7 @@ const ExerciseRow = ({
       </Popover>
       <span>-</span>
       {exercise.sets?.map((set, idx) => (
-        <span key={set.id || set.temporaryId}>
+        <span key={set.id}>
           {idx > 0 ? ", " : " "}
           <Popover key={set.id}>
             <PopoverTrigger asChild>
