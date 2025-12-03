@@ -20,7 +20,6 @@ import { useNavigate } from "react-router-dom";
 import AddWeightReps from "@/components/AddWeightReps";
 import { selectStyles } from "@/lib/utils";
 import { useUser } from "@clerk/react-router";
-import PreviousNextWorkouts from "@/components/workout/previousNextWorkouts";
 import WorkoutNavigation from "@/components/workout/workoutNavigation";
 
 const defaultWeight = 0;
