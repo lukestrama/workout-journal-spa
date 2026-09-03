@@ -45,8 +45,8 @@ export function useWorkouts() {
   }, [userId, loadWorkouts]);
 
   const initialDataSync = useCallback(async () => {
-    if (!userId) return;
-    await localSyncService.fullInitialSync(userId, supabase!);
+    if (!userId || !supabase) return;
+    await localSyncService.fullInitialSync(userId, supabase);
     loadWorkouts();
   }, [userId, supabase, loadWorkouts]);
 

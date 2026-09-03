@@ -2,7 +2,29 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { db } from "../db";
 import type { Workout } from "./models";
 
-export async function syncWithSupabase(supabase: SupabaseClient) {
+export async function syncWithSupabase(
+  supabase: SupabaseClient,
+  userId?: string,
+) {
+  // Always pull all remote workouts for the user and update local DB
+  if (userId) {
+    const { data: remoteWorkouts, error } = await supabase
+      .from("workouts")
+      .select("*")
+      .eq("user_id", userId);
+    if (error) {
+      console.error("Error fetching remote workouts:", error);
+    } else if (remoteWorkouts) {
+      // Remove all local workouts for this user and replace with remote
+      await db.workouts.where("user_id").equals(userId).delete();
+      for (const w of remoteWorkouts) {
+        await db.workouts.put({ ...w, synced: true });
+      }
+      console.log(
+        `Synced ${remoteWorkouts.length} workouts from server for user ${userId}`,
+      );
+    }
+  }
   const lastSynced = (await db.metadata.get("lastSyncedAt"))?.value ?? null;
 
   // First, let's check if we have any records without synced field and fix them
@@ -81,7 +103,7 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
         await supabase
           .from("workouts")
           .update({ deleted_at: w.deleted_at, updated_at: w.updated_at })
-          .eq("id", w.id)
+          .eq("id", w.id),
     );
   }
 
@@ -90,14 +112,14 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     .delete()
     .in(
       "id",
-      deletedExercises.map((e) => e.id)
+      deletedExercises.map((e) => e.id),
     );
   await supabase
     .from("sets")
     .delete()
     .in(
       "id",
-      deletedSets.map((s) => s.id)
+      deletedSets.map((s) => s.id),
     );
 
   await Promise.all([
@@ -134,7 +156,7 @@ export async function syncWithSupabase(supabase: SupabaseClient) {
     }
   });
   await db.exercises.bulkPut(
-    remoteExercises?.map((e) => ({ ...e, synced: true })) ?? []
+    remoteExercises?.map((e) => ({ ...e, synced: true })) ?? [],
   );
   await db.sets.bulkPut(remoteSets?.map((s) => ({ ...s, synced: true })) ?? []);
 

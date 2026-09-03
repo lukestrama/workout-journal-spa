@@ -14,21 +14,21 @@ import Dialog from "../components/Dialog";
 import { db } from "@/lib/db";
 import { useEffect } from "react";
 import { SyncButton } from "../components/SyncButton";
+import { useSupabase } from "@/lib/supabase/SupabaseProvider";
 
 export default function WorkoutsPage() {
   const { user } = useUser();
+  const { supabase } = useSupabase();
   const { workouts, deleteWorkout, loading, initialDataSync, refreshWorkouts } =
     useWorkouts();
 
-  // Initialize IndexedDB when user logs in
+  // Initialize IndexedDB once the user is signed in AND the Supabase client is
+  // ready. Running before the client exists throws inside the sync layer.
   useEffect(() => {
     const initializeDatabase = async () => {
-      if (!user?.id) return;
+      if (!user?.id || !supabase) return;
 
       try {
-        // Initialize database first
-        await db.open();
-
         const hasSyncedBefore = await db.metadata.get("initialSyncDone");
 
         if (!hasSyncedBefore) {
@@ -39,12 +39,13 @@ export default function WorkoutsPage() {
           });
         }
       } catch (error) {
+        // Leave the flag unset so the sync is retried on the next mount.
         console.error("Database initialization failed:", error);
       }
     };
 
     initializeDatabase();
-  }, [user?.id, initialDataSync]);
+  }, [user?.id, supabase, initialDataSync]);
 
   const handleDeleteWorkout = (
     e: React.MouseEvent<HTMLButtonElement>,
