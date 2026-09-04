@@ -16,25 +16,32 @@ export default function SupabaseProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { session } = useSession();
+  const { session, isLoaded: sessionLoaded } = useSession();
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
   useEffect(() => {
-    if (!session) return;
+    if (!session) {
+      // Signed out (or session not yet resolved): drop any stale client.
+      setSupabase(null);
+      return;
+    }
     const client = createClient(
       import.meta.env.VITE_SUPABASE_URL!,
       import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
       {
-        accessToken: () => session?.getToken(),
+        accessToken: () => session.getToken(),
       }
     );
     setSupabase(client);
-    setIsLoaded(true);
   }, [session]);
+
+  // Ready once Clerk has resolved the session state and, when signed in, the
+  // Supabase client has actually been created. Consumers must not touch
+  // `supabase` until this is true.
+  const isLoaded = sessionLoaded && (!session || supabase !== null);
 
   return (
     <Context.Provider value={{ supabase, isLoaded }}>
-      {/* {!isLoaded ? <div> Loading...</div> : children} */}
       {children}
     </Context.Provider>
   );
